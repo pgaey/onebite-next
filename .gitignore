@@ -1,5 +1,12 @@
-# .gitignore 예시
+# Next.js
+.next/
+.next/**
+
+# Node
 node_modules/
-dist/
-.env
+
+# macOS
 .DS_Store
+
+# 환경 변수
+.env
