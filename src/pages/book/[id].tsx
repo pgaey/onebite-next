@@ -1,4 +1,6 @@
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import style from './[id].module.css';
+import fetchOneBook from '@/lib/fetch-one-book';
 
 const mockData = {
     "id": 1,
@@ -10,7 +12,24 @@ const mockData = {
     "coverImgUrl": "https://shopping-phinf.pstatic.net/main_3888828/38888282618.20230913071643.jpg"
 }
 
-export default function Page() {
+export const getServerSideProps = async (
+    context: GetServerSidePropsContext
+) => {
+    const id = context.params!.id;  // page 자체가 id 가 있어야 접근 가능한 tsx.
+    const book = await fetchOneBook(Number(id));
+
+    return {
+        props: {
+            book,
+        },
+    };
+}
+
+export default function Page({
+    book
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
+    if (!book) return "문제 발생. 재시도 하세요";
 
     const {
         id,
@@ -20,13 +39,13 @@ export default function Page() {
         author,
         publisher,
         coverImgUrl
-    } = mockData;
-    
+    } = book;
+
     return (
         <div className={style.container}>
             <div
                 className={style.cover_img_container}
-                style={{ backgroundImage: `url('${coverImgUrl}')`}}
+                style={{ backgroundImage: `url('${coverImgUrl}')` }}
             >
                 <img src={coverImgUrl} alt="" />
             </div>
